@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Delivery</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Food Delivery</h1>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li id="auth-section">
+                    {% if user_name %}
+                        <span>Welcome, {{ user_name }}!</span>
+                        <form action="/logout" method="post" style="display: inline;">
+                            <button type="submit">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="/login_page">Login</a> | 
+                        <a href="/register_page">Register</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Welcome to the Food Delivery Service!</h2>
+        <p>Order your favorite meals online and enjoy fast delivery.</p>
+    </main>
+    <footer>
+        <p>&copy; 2024 Food Delivery. All rights reserved.</p>
+    </footer>
+</body>
+</html>
