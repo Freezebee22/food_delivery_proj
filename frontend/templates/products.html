@@ -4,25 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
-        <h1>Food Delivery</h1>
-        <nav>
-            <ul>
-                <li><a href="/home">Home</a></li>
-                <li><a href="/login_page">Login</a></li>
-                <li><a href="/register_page">Register</a></li>
-            </ul>
-        </nav>
+        <h1>Product Catalog</h1>
+        <a href="http://localhost:8000/home">Home</a>
+        <a href="http://localhost:8000/logout">Logout</a>
     </header>
     <main>
-        <h2>Welcome to Products Page!</h2>
-        <p>Here you can find all our available products.</p>
+        <h2>Available Products</h2>
+        <ul>
+            {% for product in products %}
+            <li>
+                <strong>{{ product.name }}</strong> - ${{ product.price }}
+                <button onclick="addToCart({{ product.id }})">Add to Cart</button>
+            </li>
+            {% endfor %}
+        </ul>
     </main>
-    <footer>
-        <p>&copy; 2024 Food Delivery. All rights reserved.</p>
-    </footer>
+    <script>
+        console.log("Access token:", getCookie("access_token"));
+        async function addToCart(productId) {
+            console.log("addToCart");
+            const response = await fetch(`/add_to_cart`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + getCookie("access_token") // Берем токен из cookies
+                },
+                body: JSON.stringify({ product_id: productId })
+            });
+            console.log("goida");
+            if (response.ok) {
+                alert("Product added to cart!");
+            } else {
+                const error = await response.json();
+                alert("Error: " + JSON.stringify(error));
+            }
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
 </body>
 </html>

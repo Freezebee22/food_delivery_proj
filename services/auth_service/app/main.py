@@ -100,6 +100,6 @@ def login_form(
     """Обработка формы входа."""
     response = login(email, password, db)
     access_token = response["access_token"]
-    redirect_response = RedirectResponse(url="/products", status_code=303)
+    redirect_response = RedirectResponse(url="http://localhost:8001/products_page", status_code=303)
     redirect_response.set_cookie(key="access_token", value=access_token)
     return redirect_response
