@@ -72,8 +72,10 @@ def view_cart(request: Request, token: str = Depends(get_token_from_cookies), db
     )
 
 @app.post("/order/create", response_model=OrderResponse)
-def create_order(user_email: str, db: Session = Depends(get_db)):
+def create_order(token: str = Depends(get_token_from_cookies), db: Session = Depends(get_db)):
     """Создание заказа из корзины."""
+    current_user = get_current_user(token)
+    user_email = current_user["email"]
     cart_items = db.query(CartItem).filter(CartItem.user_email == user_email).all()
     if not cart_items:
         raise HTTPException(status_code=400, detail="Cart is empty")
@@ -82,7 +84,7 @@ def create_order(user_email: str, db: Session = Depends(get_db)):
     order = Order(user_email=user_email)
     db.add(order)
     db.commit()
-    db.refresh(order)
+    # db.refresh(order)
 
     # Переносим товары из корзины в заказ
     for item in cart_items:
@@ -92,7 +94,7 @@ def create_order(user_email: str, db: Session = Depends(get_db)):
             quantity=item.quantity,
         )
         db.add(order_item)
-        db.delete(item)  # Удаляем из корзины
+        # db.delete(item)  # Удаляем из корзины
 
     db.commit()
     return order

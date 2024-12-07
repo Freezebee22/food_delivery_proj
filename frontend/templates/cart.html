@@ -37,7 +37,7 @@
             });
             if (response.ok) {
                 alert('Order successfully placed!');
-                //window.location.reload();
+                window.location.reload();
             } else {
                 const error = await response.json();
                 alert('Error: ' + error.detail);
