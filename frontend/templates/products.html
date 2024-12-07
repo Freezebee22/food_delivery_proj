@@ -11,6 +11,7 @@
         <h1>Product Catalog</h1>
         <a href="http://localhost:8000/home">Home</a>
         <a href="http://localhost:8000/logout">Logout</a>
+        <a href="http://localhost:8002/cart">Cart</a>
     </header>
     <main>
         <h2>Available Products</h2>
@@ -27,6 +28,7 @@
         console.log("Access token:", getCookie("access_token"));
         async function addToCart(productId) {
             console.log("addToCart");
+            const userEmail = getCookie("user_email");
             const response = await fetch(`/add_to_cart`, {
                 method: "POST",
                 headers: {

@@ -49,7 +49,15 @@ def add_to_cart(request: ProductAddToCartRequest, token: str = Depends(oauth2_sc
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    # Здесь будет логика отправки данных в order_service (в будущем)
+    print(current_user["email"])
+    response = requests.post(
+        "http://localhost:8002/cart/add",  # URL order_service
+        json={"product_id": request.product_id, "quantity": 1, "user_email": current_user["email"]},
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    if response.status_code != 200:
+        raise HTTPException(status_code=response.status_code, detail=response.json()["detail"])
+
     return {"message": f"Product {product.name} added to cart for user {current_user['email']}"}
 
 # Подключение маршрутов
