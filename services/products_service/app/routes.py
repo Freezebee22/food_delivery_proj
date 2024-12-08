@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Product
 from schemas import ProductCreate, ProductUpdate, ProductResponse
+from typing import List
 
 templates = Jinja2Templates(directory="../../../frontend/templates")
 
@@ -42,6 +43,14 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
+@product_router.post("/bulk", response_model=List[ProductResponse])
+def get_products_bulk(product_ids: List[int], db: Session = Depends(get_db)):
+    products = db.query(Product).filter(Product.id.in_(product_ids)).all()
+    if not products:
+        raise HTTPException(status_code=404, detail="No products found")
+    return products
+
+
 @product_router.put("/{product_id}", response_model=ProductResponse)
 def update_product(product_id: int, product: ProductUpdate, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
@@ -61,3 +70,5 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     db.delete(db_product)
     db.commit()
     return {"detail": "Product deleted"}
+
+

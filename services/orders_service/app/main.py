@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Depends, Request, HTTPException
 import requests
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from starlette import status
 from starlette.responses import HTMLResponse
 
 from database import init_db, get_db
@@ -59,17 +61,58 @@ def add_to_cart(request: AddToCartRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Product added to cart"}
 
+PRODUCT_SERVICE_URL = "http://localhost:8001"  # URL сервиса продуктов
+
 @app.get("/cart", response_class=HTMLResponse)
 def view_cart(request: Request, token: str = Depends(get_token_from_cookies), db: Session = Depends(get_db)):
-    """Отображение корзины пользователя."""
-    print("view_cart", token)
+    """Отображение корзины пользователя с названиями продуктов."""
     current_user = get_current_user(token)  # Проверяем токен и извлекаем данные о пользователе
     user_email = current_user["email"]
+
+    # Получаем товары из корзины
     cart_items = db.query(CartItem).filter(CartItem.user_email == user_email).all()
+    if not cart_items:
+        return templates.TemplateResponse(
+            "cart.html", {"request": request, "cart_items": [], "user_email": user_email}
+        )
+
+    # Получаем данные о продуктах через API `products_service`
+    product_ids = [item.product_id for item in cart_items]
+    print(product_ids)
+    response = requests.post(f"{PRODUCT_SERVICE_URL}/bulk", json=product_ids)
+    products = response.json()
+    print(products)
+    product_details = {product["id"]: product for product in products}
+
+    # Обогащаем данные корзины
+    enriched_cart_items = [
+        {
+            "product_name": product_details.get(item.product_id, {}).get("name", "Unknown Product"),
+            "quantity": item.quantity,
+            "price": product_details.get(item.product_id, {}).get("price", 0.0),
+            "total": item.quantity * product_details[item.product_id]["price"],
+        }
+        for item in cart_items
+    ]
+
     return templates.TemplateResponse(
         "cart.html",
-        {"request": request, "cart_items": cart_items, "user_email": user_email},
+        {"request": request, "cart_items": enriched_cart_items, "user_email": user_email},
     )
+
+@app.post("/cart/clear")
+async def clear_cart(db: Session = Depends(get_db), token: str = Depends(get_token_from_cookies)):
+    try:
+        # Очистить все товары в корзине для текущего пользователя
+        current_user = get_current_user(token)
+        user_email = current_user["email"]
+        db.query(CartItem).filter(CartItem.user_email == user_email).delete()
+        db.commit()
+        print("vso ok")
+        return RedirectResponse(url="/cart", status_code=status.HTTP_302_FOUND)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Ошибка при очистке корзины")
 
 @app.post("/order/create", response_model=OrderResponse)
 def create_order(token: str = Depends(get_token_from_cookies), db: Session = Depends(get_db)):
@@ -82,6 +125,7 @@ def create_order(token: str = Depends(get_token_from_cookies), db: Session = Dep
 
     # Создаем заказ
     order = Order(user_email=user_email)
+    print(cart_items, order)
     db.add(order)
     db.commit()
     # db.refresh(order)
@@ -94,7 +138,7 @@ def create_order(token: str = Depends(get_token_from_cookies), db: Session = Dep
             quantity=item.quantity,
         )
         db.add(order_item)
-        # db.delete(item)  # Удаляем из корзины
+        db.delete(item)  # Удаляем из корзины
 
     db.commit()
     return order

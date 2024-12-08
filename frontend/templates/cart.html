@@ -17,10 +17,14 @@
         <ul>
             {% for item in cart_items %}
             <li>
-                Product ID: {{ item.product_id }} - Quantity: {{ item.quantity }}
+                <strong>{{ item.product_name }}</strong> - Quantity: {{ item.quantity }} - ${{ item.price * item.quantity }}
             </li>
             {% endfor %}
         </ul>
+        <h2>Итого: ${{ cart_items | sum(attribute='total') }}</h2>
+        <form action="/cart/clear" method="POST">
+            <button type="submit" class="btn btn-danger">Очистить корзину</button>
+        </form>
         <button onclick="createOrder()">Place Order</button>
         {% else %}
         <p>Your cart is empty.</p>

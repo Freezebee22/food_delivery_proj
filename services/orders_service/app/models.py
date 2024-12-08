@@ -11,6 +11,8 @@ class CartItem(Base):
     product_id = Column(Integer, index=True)
     quantity = Column(Integer, default=1)
 
+    # product = relationship("Product", backref="cart_items")
+
 class Order(Base):
     __tablename__ = "orders"
 
