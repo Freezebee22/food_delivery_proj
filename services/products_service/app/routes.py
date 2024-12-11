@@ -2,12 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import Product
-from schemas import ProductCreate, ProductUpdate, ProductResponse
+from app.database import SessionLocal
+from app.models import Product
+from app.schemas import ProductCreate, ProductUpdate, ProductResponse
 from typing import List
 
-templates = Jinja2Templates(directory="../../../frontend/templates")
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "../frontend/templates"))
 
 product_router = APIRouter()
 
@@ -19,7 +21,7 @@ def get_db():
     finally:
         db.close()
 
-@product_router.get("/products_page", response_class=HTMLResponse)
+@product_router.get("/page", response_class=HTMLResponse)
 def products_page(request: Request, db: Session = Depends(get_db)):
     products = db.query(Product).all()
     return templates.TemplateResponse("products.html", {"request": request, "products": products})

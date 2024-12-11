@@ -9,7 +9,7 @@
 <body>
     <header>
         <h1>User Cart</h1>
-        <a href="http://localhost:8001/products_page">Back to Products</a>
+        <a href="/products/page">Back to Products</a>
     </header>
     <main>
         <h2>Your Cart</h2>
@@ -22,7 +22,7 @@
             {% endfor %}
         </ul>
         <h2>Итого: ${{ cart_items | sum(attribute='total') }}</h2>
-        <form action="/cart/clear" method="POST">
+        <form action="/orders/cart/clear" method="POST">
             <button type="submit" class="btn btn-danger">Очистить корзину</button>
         </form>
         <button onclick="createOrder()">Place Order</button>
@@ -32,7 +32,7 @@
     </main>
     <script>
         async function createOrder() {
-            const response = await fetch('/order/create', {
+            const response = await fetch('/orders/order/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

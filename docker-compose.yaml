@@ -1,0 +1,111 @@
+version: "3.8"
+services:
+  # Auth Service
+  auth_service:
+    build:
+      context: ./services/auth_service
+    ports:
+      - "8000:8000"
+    container_name: auth_service
+    environment:
+      DATABASE_URL: postgresql+psycopg2://myuser:password@auth_db:5432/auth_db
+    volumes:
+        - ./frontend/templates:/app/frontend/templates
+    networks:
+      - app_network
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:15
+    container_name: auth_db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # Products Service
+  products_service:
+    build:
+      context: ./services/products_service
+    ports:
+      - "8001:8000"
+    container_name: products_service
+    volumes:
+        - ./frontend/templates:/app/frontend/templates
+    networks:
+      - app_network
+    environment:
+      DATABASE_URL: postgresql://products_user:password@products_db:5432/products_db
+    depends_on:
+      - products_db
+
+  products_db:
+    image: postgres:15
+    container_name: products_db
+    environment:
+      POSTGRES_USER: products_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: products_db
+    volumes:
+      - products_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # Order Service
+  order_service:
+    build:
+      context: ./services/orders_service
+    ports:
+      - "8002:8000"
+    container_name: order_service
+    volumes:
+        - ./frontend/templates:/app/frontend/templates
+    networks:
+      - app_network
+    environment:
+      DATABASE_URL: postgresql+psycopg2://orders_user:password@orders_db:5432/orders_db
+    depends_on:
+      - orders_db
+
+  orders_db:
+    image: postgres:15
+    container_name: orders_db
+    environment:
+      POSTGRES_USER: orders_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: orders_db
+    volumes:
+      - orders_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # API Gateway
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+    - ./frontend:/frontend:ro
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - app_network
+    depends_on:
+      - auth_service
+      - products_service
+      - order_service
+
+networks:
+    app_network:
+      driver: bridge
+
+volumes:
+  auth_db_data:
+  products_db_data:
+  orders_db_data:

@@ -2,10 +2,10 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 import requests
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from database import init_db, SessionLocal, get_db
-from routes import product_router
-from models import Product
-from schemas import ProductAddToCartRequest
+from app.database import init_db, SessionLocal, get_db
+from app.routes import product_router
+from app.models import Product
+from app.schemas import ProductAddToCartRequest
 
 app = FastAPI(
     title="Product Catalog Service",
@@ -13,8 +13,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
-AUTH_SERVICE_URL = "http://localhost:8000/auth/verify_token"  # Указать реальный URL
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+AUTH_SERVICE_URL = "http://nginx/auth/verify_token"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 # Инициализация базы данных
 init_db()
@@ -37,6 +37,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     """Проверка токена через auth_service и получение текущего пользователя."""
     print(token)
     response = requests.get(AUTH_SERVICE_URL, headers={"Authorization": f"Bearer {token}"})
+    print(response.json())
     if response.status_code != 200:
         raise HTTPException(status_code=401, detail="Invalid authentication credentials")
     return response.json()  # Возвращает данные о пользователе
@@ -51,7 +52,7 @@ def add_to_cart(request: ProductAddToCartRequest, token: str = Depends(oauth2_sc
 
     print(current_user["email"])
     response = requests.post(
-        "http://localhost:8002/cart/add",  # URL order_service
+        "http://nginx/orders/cart/add",  # URL order_service
         json={"product_id": request.product_id, "quantity": 1, "user_email": current_user["email"]},
         headers={"Authorization": f"Bearer {token}"}
     )

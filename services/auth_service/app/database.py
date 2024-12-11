@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # Настройка подключения к базе данных
-DATABASE_URL = "postgresql+psycopg2://myuser:password@localhost:5432/auth_db"
+DATABASE_URL = "postgresql+psycopg2://myuser:password@auth_db:5432/auth_db"
 # DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)

@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import HTMLResponse
 
-from database import init_db, get_db
-from models import CartItem, Order, OrderItem
-from schemas import AddToCartRequest, OrderResponse
+from app.database import init_db, get_db
+from app.models import CartItem, Order, OrderItem
+from app.schemas import AddToCartRequest, OrderResponse
 
 app = FastAPI(
     title="Order Service",
@@ -21,10 +21,12 @@ app = FastAPI(
 init_db()
 
 # Настройка шаблонов
-templates = Jinja2Templates(directory="../../../frontend/templates")
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "../frontend/templates"))
 
-AUTH_SERVICE_URL = "http://localhost:8000/auth/verify_token"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+AUTH_SERVICE_URL = "http://nginx/auth/verify_token"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 async def get_token_from_cookies(request: Request):
     token = request.cookies.get("access_token")  # Читаем токен из cookies
@@ -61,7 +63,7 @@ def add_to_cart(request: AddToCartRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Product added to cart"}
 
-PRODUCT_SERVICE_URL = "http://localhost:8001"  # URL сервиса продуктов
+PRODUCT_SERVICE_URL = "http://nginx/products"  # URL сервиса продуктов
 
 @app.get("/cart", response_class=HTMLResponse)
 def view_cart(request: Request, token: str = Depends(get_token_from_cookies), db: Session = Depends(get_db)):
@@ -109,7 +111,7 @@ async def clear_cart(db: Session = Depends(get_db), token: str = Depends(get_tok
         db.query(CartItem).filter(CartItem.user_email == user_email).delete()
         db.commit()
         print("vso ok")
-        return RedirectResponse(url="/cart", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(url="/orders/cart", status_code=status.HTTP_302_FOUND)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Ошибка при очистке корзины")

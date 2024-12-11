@@ -11,17 +11,17 @@
         <h1>Food Delivery</h1>
         <nav>
             <ul>
-                <li><a href="/home">Home</a></li>
-                <li><a href="http://localhost:8001/products_page">Products</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products/page">Products</a></li>
                 <li id="auth-section">
                     {% if user_name %}
                         <span>Welcome, {{ user_name }}!</span>
-                        <form action="/logout" method="post" style="display: inline;">
+                        <form action="/auth/logout" method="post" style="display: inline;">
                             <button type="submit">Logout</button>
                         </form>
                     {% else %}
-                        <a href="/login_page">Login</a> | 
-                        <a href="/register_page">Register</a>
+                        <a href="/auth/login_page">Login</a> | 
+                        <a href="/auth/register_page">Register</a>
                     {% endif %}
                 </li>
             </ul>

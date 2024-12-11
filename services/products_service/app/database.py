@@ -2,14 +2,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./product_catalog.db"  # Для простоты, SQLite
+DATABASE_URL = "postgresql+psycopg2://products_user:password@products_db:5432/products_db"
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def init_db():
-    import models
+    # import models
     Base.metadata.create_all(bind=engine)
 
 def get_db():

@@ -1,9 +1,9 @@
 # В products_service.py
 from fastapi import Depends, HTTPException, Request
 import jwt
-from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from database import get_db
+# from datetime import datetime, timedelta
+# from sqlalchemy.orm import Session
+# from database import get_db
 
 SECRET_KEY = "my_secret_key"
 ALGORITHM = "HS256"

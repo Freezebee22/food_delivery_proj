@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Request, Depends, Form, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from routes import auth_router, register_user, login
-from database import Base, engine, get_db
-from schemas import UserCreate
+from app.routes import auth_router, register_user, login
+from app.database import Base, engine, get_db
+from app.schemas import UserCreate
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
-from utils import decode_access_token, SECRET_KEY, ALGORITHM
+from app.utils import decode_access_token, SECRET_KEY, ALGORITHM
 
 # Создание таблиц
 Base.metadata.create_all(bind=engine)
@@ -18,11 +18,16 @@ app = FastAPI(
     version="1.0.0"
 )
 
+import os
 # Шаблоны
-templates = Jinja2Templates(directory="../../../frontend/templates")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "../frontend/templates"))
+
+if not os.path.exists("../frontend/templates/index.html"):
+    print(os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../frontend/templates")))
 
 # Подключение маршрутов API
-app.include_router(auth_router, prefix="/auth")
+app.include_router(auth_router)
 
 
 def get_current_user(request: Request):
@@ -65,7 +70,7 @@ def login_page(request: Request):
 @app.post("/logout")
 def logout():
     """Выход из аккаунта."""
-    response = RedirectResponse(url="/home", status_code=303)
+    response = RedirectResponse(url="/", status_code=303)
     response.delete_cookie("access_token")
     return response
 
@@ -74,7 +79,7 @@ def products_page(request: Request):
     """Страница продуктов доступна только авторизованным пользователям."""
     user = get_current_user(request)
     if not user:
-        return RedirectResponse(url="/login_page", status_code=303)
+        return RedirectResponse(url="auth/login_page", status_code=303)
     return templates.TemplateResponse("products.html", {"request": request, "user": user})
 
 
@@ -88,7 +93,7 @@ def register_form(
     """Обработка формы регистрации."""
     user_data = UserCreate(email=email, password=password, full_name=full_name)
     register_user(user_data, db)
-    return RedirectResponse(url="/login_page", status_code=303)
+    return RedirectResponse(url="/auth/login_page", status_code=303)
 
 
 @app.post("/login_form")
@@ -100,6 +105,6 @@ def login_form(
     """Обработка формы входа."""
     response = login(email, password, db)
     access_token = response["access_token"]
-    redirect_response = RedirectResponse(url="http://localhost:8001/products_page", status_code=303)
+    redirect_response = RedirectResponse(url="/products/page", status_code=303)
     redirect_response.set_cookie(key="access_token", value=access_token)
     return redirect_response
