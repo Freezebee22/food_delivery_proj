@@ -21,11 +21,17 @@ init_db()
 
 def seed_data():
     db = SessionLocal()
+    db.query(Product).delete()
+    db.commit()
     if not db.query(Product).first():  # Проверяем, пустая ли таблица
         products = [
-            Product(name="Apple", description="Fresh and juicy apples", price=0.99, image_url="https://example.com/apple.jpg"),
-            Product(name="Banana", description="Ripe bananas", price=0.79, image_url="https://example.com/banana.jpg"),
-            Product(name="Orange", description="Sweet oranges", price=1.25, image_url="https://example.com/orange.jpg"),
+            Product(name='Печенье "Лакомка"', description="Fresh and juicy apples", price=89.99, image_url="https://example.com/apple.jpg"),
+            Product(name='Чай черный в пакетиках (25 шт.)', description="Ripe bananas", price=109.89, image_url="https://example.com/banana.jpg"),
+            Product(name="Чипсы May's со сметанной и луком", description="Sweet oranges", price=129.99, image_url="https://example.com/orange.jpg"),
+            Product(name="Хлеб ржаной", description="Sweet oranges", price=29.99, image_url="https://example.com/orange.jpg"),
+            Product(name="Бананы спелые (1 шт)", description="Sweet oranges", price=39.90, image_url="https://example.com/orange.jpg"),
+            Product(name="Картофель (100 г)", description="Sweet oranges", price=29.90, image_url="https://example.com/orange.jpg"),
+            Product(name='Лимонад "Буратино"', description="Sweet oranges", price=19.50, image_url="https://example.com/orange.jpg"),
         ]
         db.add_all(products)
         db.commit()

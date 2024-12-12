@@ -8,26 +8,27 @@
 </head>
 <body>
     <header>
-        <h1>User Cart</h1>
-        <a href="/products/page">Back to Products</a>
+        <h1>Корзина</h1>
+        <nav><ul><li><a href="/products/page">В каталог</a></li></ul></nav>
     </header>
     <main>
-        <h2>Your Cart</h2>
+        <h2>Ваша корзина</h2>
         {% if cart_items %}
         <ul>
             {% for item in cart_items %}
             <li>
-                <strong>{{ item.product_name }}</strong> - Quantity: {{ item.quantity }} - ${{ item.price * item.quantity }}
+                <strong>{{ item.product_name }}</strong> - Quantity: {{ item.quantity }} - {{ item.price * item.quantity }}₽
             </li>
             {% endfor %}
         </ul>
-        <h2>Итого: ${{ cart_items | sum(attribute='total') }}</h2>
-        <form action="/orders/cart/clear" method="POST">
+        <h2>Итого: {{ cart_items | sum(attribute='total') }}₽</h2>
+        <form action="/orders/cart/clear" method="POST" class="block">
             <button type="submit" class="btn btn-danger">Очистить корзину</button>
         </form>
-        <button onclick="createOrder()">Place Order</button>
+        <br>
+        <button onclick="createOrder()">Сделать заказ</button>
         {% else %}
-        <p>Your cart is empty.</p>
+        <p>Ваша корзина пуста.</p>
         {% endif %}
     </main>
     <script>

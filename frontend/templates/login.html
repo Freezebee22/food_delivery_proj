@@ -4,32 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
         <h1>Food Delivery</h1>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/auth/register_page">Register</a></li>
+                <li><a href="/">Главная страница</a></li>
+                <li><a href="/auth/register_page">Регистрация</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <h2>Login</h2>
+        <h2>Вход</h2>
         <form action="/auth/login_form" method="POST">
-            <label for="email">Email:</label>
+            <label for="email">Введите почту:</label>
             <input type="email" id="email" name="email" required>
             <br>
-            <label for="password">Password:</label>
+            <label for="password">Введите пароль:</label>
             <input type="password" id="password" name="password" required>
             <br>
-            <button type="submit">Login</button>
+            <button type="submit">Войти</button>
         </form>
     </main>
     <footer>
-        <p>&copy; 2024 Food Delivery. All rights reserved.</p>
+        <p>&copy; 2024 Food Delivery by Freezebee. All rights reserved.</p>
     </footer>
 </body>
 </html>

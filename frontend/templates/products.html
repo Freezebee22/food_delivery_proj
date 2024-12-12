@@ -8,18 +8,22 @@
 </head>
 <body>
     <header>
-        <h1>Product Catalog</h1>
-        <a href="/">Home</a>
-        <!-- <a href="http://localhost:8000/logout">Logout</a> -->
-        <a href="/orders/cart">Cart</a>
+        <h1>Каталог продуктов</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Главная страница</a></li>
+                <!-- <a href="http://localhost:8000/logout">Logout</a> -->
+                <li><a href="/orders/cart">Корзина</a></li>
+            </ul>
+        </nav>
     </header>
     <main>
-        <h2>Available Products</h2>
+        <h2>Доступные продукты</h2>
         <ul>
             {% for product in products %}
             <li>
-                <strong>{{ product.name }}</strong> - ${{ product.price }}
-                <button onclick="addToCart({{ product.id }})">Add to Cart</button>
+                <strong>{{ product.name }}</strong> - {{ product.price }}₽
+                <button onclick="addToCart({{ product.id }})">В корзину</button>
             </li>
             {% endfor %}
         </ul>

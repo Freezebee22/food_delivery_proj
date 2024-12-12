@@ -4,35 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Delivery</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
         <h1>Food Delivery</h1>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/products/page">Products</a></li>
+                <li><a href="/">Главная страница</a></li>
+                <li><a href="/products/page">Каталог продуктов</a></li>
                 <li id="auth-section">
                     {% if user_name %}
-                        <span>Welcome, {{ user_name }}!</span>
+                        <span>С возвращением, {{ user_name }}!</span>
                         <form action="/auth/logout" method="post" style="display: inline;">
-                            <button type="submit">Logout</button>
+                            <button type="submit">Выйти из аккаунта</button>
                         </form>
                     {% else %}
-                        <a href="/auth/login_page">Login</a> | 
-                        <a href="/auth/register_page">Register</a>
+                        <a href="/auth/login_page">Вход</a> | 
+                        <a href="/auth/register_page">Регистрация</a>
                     {% endif %}
                 </li>
             </ul>
         </nav>
     </header>
     <main>
-        <h2>Welcome to the Food Delivery Service!</h2>
-        <p>Order your favorite meals online and enjoy fast delivery.</p>
+        <h2>Рады приветствовать Вас в сервисе по доставке еды!</h2>
+        <p>Выберите продукты в каталоге и мы привезем их в течение 5 минут!</p>
     </main>
     <footer>
-        <p>&copy; 2024 Food Delivery. All rights reserved.</p>
+        <p>&copy; 2024 Food Delivery by Freezebee. All rights reserved.</p>
     </footer>
 </body>
 </html>

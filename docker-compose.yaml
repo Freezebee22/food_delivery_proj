@@ -11,6 +11,7 @@ services:
       DATABASE_URL: postgresql+psycopg2://myuser:password@auth_db:5432/auth_db
     volumes:
         - ./frontend/templates:/app/frontend/templates
+        - ./frontend/static:/app/frontend/static
     networks:
       - app_network
     depends_on:
@@ -37,6 +38,7 @@ services:
     container_name: products_service
     volumes:
         - ./frontend/templates:/app/frontend/templates
+        - ./frontend/static:/app/frontend/static
     networks:
       - app_network
     environment:

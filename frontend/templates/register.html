@@ -3,24 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Registration</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Регистрация</h1>
-    <form action="/auth/register_form" method="post">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        
-        <label for="full_name">Полное имя:</label>
-        <input type="text" id="full_name" name="full_name">
-        <br>
+    <header>
+        <h1>Food Delivery</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Главная страница</a></li>
+                <li><a href="/auth/login_page">Вход</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Регистрация</h2>
+        <form action="/auth/register_form" method="POST">
+            <label for="email">Введите почту:</label>
+            <input type="email" id="email" name="email" required>
+            <br>
+            
+            <label for="password">Введите пароль:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            
+            <label for="full_name">Введите полное имя:</label>
+            <input type="text" id="full_name" name="full_name">
+            <br>
 
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2024 Food Delivery by Freezebee. All rights reserved.</p>
+    </footer>
 </body>
 </html>
